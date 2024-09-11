@@ -1,0 +1,113 @@
+[gd_scene load_steps=23 format=3 uid="uid://bxq6xu7gl7fp2"]
+
+[ext_resource type="Terrain3DStorage" uid="uid://ch4v0tg4f3x7m" path="res://terrainData.res" id="2_80n31"]
+[ext_resource type="PackedScene" uid="uid://drrjyhqqusirj" path="res://Arbre1.tscn" id="3_2krdc"]
+[ext_resource type="PackedScene" uid="uid://bddicr2ohax03" path="res://avatar.tscn" id="3_7we4c"]
+[ext_resource type="PackedScene" uid="uid://bb2lp50sjndus" path="res://demo/components/World.tscn" id="3_mwak2"]
+[ext_resource type="Texture2D" uid="uid://dhbojc5aptudc" path="res://Terrain/Materiaux/Ground/Ground068_8K-PNG_Color.png" id="4_go6um"]
+[ext_resource type="Texture2D" uid="uid://cknjo1b1w31i0" path="res://Terrain/Materiaux/Ground/Ground068_8K-PNG_NormalGL.png" id="5_a52hs"]
+[ext_resource type="Texture2D" uid="uid://bkys3nxe4mf8t" path="res://Terrain/Materiaux/Stone/Rock030_8K-PNG_Color.png" id="6_rd6gp"]
+[ext_resource type="Texture2D" uid="uid://dufi30n3to4e6" path="res://Terrain/Materiaux/Stone/Rock030_8K-PNG_NormalGL.png" id="7_allaw"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_p3i8c"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_a4ahe"]
+sky_material = SubResource("ProceduralSkyMaterial_p3i8c")
+
+[sub_resource type="Environment" id="Environment_f0h5h"]
+background_mode = 2
+sky = SubResource("Sky_a4ahe")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="Gradient" id="Gradient_841as"]
+offsets = PackedFloat32Array(0.2, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_gmmej"]
+noise_type = 2
+frequency = 0.03
+cellular_jitter = 3.0
+cellular_return_type = 0
+domain_warp_enabled = true
+domain_warp_type = 1
+domain_warp_amplitude = 50.0
+domain_warp_fractal_type = 2
+domain_warp_fractal_lacunarity = 1.5
+domain_warp_fractal_gain = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_3s742"]
+seamless = true
+color_ramp = SubResource("Gradient_841as")
+noise = SubResource("FastNoiseLite_gmmej")
+
+[sub_resource type="Terrain3DMaterial" id="Terrain3DMaterial_d6xl2"]
+_shader_parameters = {
+"blend_sharpness": 0.87,
+"height_blending": true,
+"macro_variation1": Color(1, 1, 1, 1),
+"macro_variation2": Color(1, 1, 1, 1),
+"noise1_angle": 0.0,
+"noise1_offset": Vector2(0.5, 0.5),
+"noise1_scale": 0.04,
+"noise2_scale": 0.076,
+"noise3_scale": 0.225,
+"noise_texture": SubResource("NoiseTexture2D_3s742"),
+"vertex_normals_distance": 128.0
+}
+world_background = 0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3h8k1"]
+cull_mode = 2
+vertex_color_use_as_albedo = true
+backlight_enabled = true
+backlight = Color(0.5, 0.5, 0.5, 1)
+
+[sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_pt0dq"]
+height_offset = 0.5
+density = 10.0
+material_override = SubResource("StandardMaterial3D_3h8k1")
+generated_type = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1w520"]
+
+[sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_vkaxi"]
+name = "Arbre1"
+id = 1
+density = 0.450231
+scene_file = ExtResource("3_2krdc")
+material_override = SubResource("StandardMaterial3D_1w520")
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_eofe5"]
+name = "node_3d_slot0_albedo_bump"
+albedo_texture = ExtResource("4_go6um")
+normal_texture = ExtResource("5_a52hs")
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_xqjbx"]
+name = "Rock030_8K-PNG_NormalGL"
+id = 1
+albedo_texture = ExtResource("6_rd6gp")
+normal_texture = ExtResource("7_allaw")
+
+[sub_resource type="Terrain3DAssets" id="Terrain3DAssets_xlwur"]
+mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_pt0dq"), SubResource("Terrain3DMeshAsset_vkaxi")])
+texture_list = Array[Terrain3DTextureAsset]([SubResource("Terrain3DTextureAsset_eofe5"), SubResource("Terrain3DTextureAsset_xqjbx")])
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_f0h5h")
+
+[node name="World" parent="." instance=ExtResource("3_mwak2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4681.26, 0)
+
+[node name="Terrain3D" type="Terrain3D" parent="World"]
+storage = ExtResource("2_80n31")
+material = SubResource("Terrain3DMaterial_d6xl2")
+assets = SubResource("Terrain3DAssets_xlwur")
+
+[node name="CharacterBody3D" parent="." instance=ExtResource("3_7we4c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 34.2023, 0)
+admin = false
