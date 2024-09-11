@@ -1,0 +1,8 @@
+# Godot 4+ specific ignores
+.godot/
+GRAND JEU.exe
+GRAND JEU.zip
+.vs/
+.github/
+.git/
+GRAND JEU.console.exe
